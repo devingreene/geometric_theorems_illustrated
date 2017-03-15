@@ -1,0 +1,18 @@
+*.vimrc
+*.vim
+.*
+!.gitignore
+
+/symbols
+
+# Pycache
+__pycache__
+
+# No image files
+*.png
+*.pdf
+*.jpeg
+*.jpg
+*.ppm
+*.tiff
+*.tif
