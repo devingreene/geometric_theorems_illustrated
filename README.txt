@@ -1,1 +1,2 @@
-I have used Python's matplotlib to illustrate some well-known(?) geometric theorems.
+I have used Python's matplotlib to make interactive
+illustrations of some famous geometric theorems.
