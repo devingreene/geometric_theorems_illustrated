@@ -1,6 +1,6 @@
 from matplotlib.pyplot import *
 import matplotlib.backend_bases as be
-import numpy as np 
+from numpy import sqrt,arccos,cos,sin
 
 # Mouse movement functions
 def reg_down(evt):
@@ -20,75 +20,63 @@ def mover(evt):
 		if down_state:
 			x[vertex] = evt.xdata
 			y[vertex] = evt.ydata
-			redefine_triangle()
+			redraw_triangle()
 	except:
 		return 
 
-def redefine_triangle():
+# Change geometry of figure
+def redraw_triangle():
 	p[0][0].set_data(x[0],y[0])
 	p[1][0].set_data(x[1],y[1])
 	p[2][0].set_data(x[2],y[2])
 	l[0][0].set_data(x[:2],y[:2])
 	l[1][0].set_data(x[1:],y[1:])
 	l[2][0].set_data([x[2],x[0]],[y[2],y[0]])
-	trisector_redraw()
+	redraw_trisectors()
 	inner_triangle_vertices = setup_inner_triangle_vertices()
 	for i in range(3):
 		inner_triangle[i][0].set_data((inner_triangle_vertices[i][0],inner_triangle_vertices[(i+1)%3][0] ),
 									  (inner_triangle_vertices[i][1],inner_triangle_vertices[(i+1)%3][1] )  )
 	fig.show()
 
-def trisector_setup():
-	global E,sides,angles,trisector_endpoints_x,trisector_endpoints_y
-	try:
-		E = 3*max([1/min(abs(x[i]-x[(i+1)%3]),abs(y[i]-y[(i+1)%3])) for i in range(3)])
-	except:
-		E = 1000
-	sides = [ np.sqrt((x[i%3]-x[(i+1)%3])**2 + (y[i%3]-y[(i+1)%3])**2) for i in range(1,4)]
-	angles = [ np.arccos((sides[(i+1)%3]**2+sides[(i+2)%3]**2 - sides[i]**2)/(2*sides[(i+1)%3]*sides[(i+2)%3]))/3 \
+	
+# Utility for rotating sides to 
+# trisectors
+def rotate_by_angle(v,theta):
+	return ( v[0]*cos(theta)-v[1]*sin(theta),
+			 v[0]*sin(theta)+v[1]*cos(theta) )
+
+def point_2_point(x0,x1,y0,y1,v0,v1,w0,w1):
+	return ( v0*(v1*(y0 - y1) - w1*(x0 - x1))/(v0*w1 - v1*w0) + x0,
+ 	w0*(v1*(y0 - y1) - w1*(x0 - x1))/(v0*w1 - v1*w0) + y0 )
+
+def setup_trisectors():
+	global sides,angles,r_d
+	sides = [ sqrt((x[i%3]-x[(i+1)%3])**2 + (y[i%3]-y[(i+1)%3])**2) for i in range(1,4)]
+	angles = [ arccos((sides[(i+1)%3]**2+sides[(i+2)%3]**2 - sides[i]**2)/(2*sides[(i+1)%3]*sides[(i+2)%3]))/3 \
 		for i in range(3) ]
 	directions = [ (x[(i+1)%3] - x[i],y[(i+1)%3]-y[i]) for i in range(3)]
-	rotated_directions = ( rotate_by_angle(directions[2],-angles[0]),
+	
+	#rotated directions
+	r_d = ( rotate_by_angle(directions[2],-angles[0]),
 						   rotate_by_angle(directions[0],angles[0]),
 						   rotate_by_angle(directions[0],-angles[1]),
 						   rotate_by_angle(directions[1],angles[1]),
 						   rotate_by_angle(directions[1],-angles[2]),
 						   rotate_by_angle(directions[2],angles[2])  )
-						   
-	trisector_endpoints_x = ( x[0] - E*rotated_directions[0][0],  
-							  x[0] + E*rotated_directions[1][0],
-							  x[1] - E*rotated_directions[2][0],
-							  x[1] + E*rotated_directions[3][0],
-							  x[2] - E*rotated_directions[4][0],
-							  x[2] + E*rotated_directions[5][0] )
-
-	trisector_endpoints_y = ( y[0] - E*rotated_directions[0][1],  
-							  y[0] + E*rotated_directions[1][1],
-							  y[1] - E*rotated_directions[2][1],
-							  y[1] + E*rotated_directions[3][1],
-							  y[2] - E*rotated_directions[4][1],
-							  y[2] + E*rotated_directions[5][1] )
-
-def rotate_by_angle(v,theta):
-	return ( v[0]*np.cos(theta)-v[1]*np.sin(theta),
-			 v[0]*np.sin(theta)+v[1]*np.cos(theta) )
-	
-def trisector_redraw():
-	trisector_setup()
-	for i in range(6):
-		trisector_plots[i][0].set_data((x[i//2],trisector_endpoints_x[i]),(y[i//2],trisector_endpoints_y[i]))
-
-def line_intersection_formula(x0,x1,x2,x3,y0,y1,y2,y3):
-	return ( x0 + (-x0 + x1)*((x0 - x2)*(y2 - y3) - (x2 - x3)*(y0 - y2))/((x0 - x1)*(y2 - y3) - (x2 - x3)*(y0 - y1)),
-	y0 + (-y0 + y1)*((x0 - x2)*(y2 - y3) - (x2 - x3)*(y0 - y2))/((x0 - x1)*(y2 - y3) - (x2 - x3)*(y0 - y1))  )
 
 def setup_inner_triangle_vertices():
-	return  ( line_intersection_formula( x[0],trisector_endpoints_x[0],x[2],trisector_endpoints_x[5],
-									     y[0],trisector_endpoints_y[0],y[2],trisector_endpoints_y[5]),
-	  line_intersection_formula( x[0],trisector_endpoints_x[1],x[1],trisector_endpoints_x[2],
-	 							 y[0],trisector_endpoints_y[1],y[1],trisector_endpoints_y[2]),
-	  line_intersection_formula( x[1],trisector_endpoints_x[3],x[2],trisector_endpoints_x[4],
-	  							 y[1],trisector_endpoints_y[3],y[2],trisector_endpoints_y[4]) )  
+	return  ( point_2_point( x[0],x[2],y[0],y[2],r_d[0][0],r_d[5][0],r_d[0][1],r_d[5][1]),\
+			point_2_point( x[0],x[1],y[0],y[1],r_d[1][0],r_d[2][0],r_d[1][1],r_d[2][1]),\
+			point_2_point( x[1],x[2],y[1],y[2],r_d[3][0],r_d[4][0],r_d[3][1],r_d[4][1])  )
+
+def redraw_trisectors():
+	setup_trisectors()
+	vertices = setup_inner_triangle_vertices()
+	for i in range(6):
+		iq = i//2
+		iq1 =((i-1) % 6 //2  + 1) % 3
+		trisector_plots[i][0].set_data((x[iq],vertices[iq1][0]),(y[iq],vertices[iq1][1]))
 
 fig = figure(figsize=(8,8))
 
@@ -100,27 +88,32 @@ down_state = 0
 
 # vertices
 x = [-1,0.5,0.5]
-y = [0,-0.5*np.sqrt(3),0.5*np.sqrt(3)]
+y = [0,-0.5*sqrt(3),0.5*sqrt(3)]
 
 p = plot(x[0],y[0]),plot(x[1],y[1]),plot(x[2],y[2])
 l = plot(x[:2],y[:2],'y'),plot(x[1:],y[1:],'y'),plot([x[2],x[0]],[y[2],y[0]],'y')
-trisector_setup()
 
-
-trisector_plots = ()
-for i in range(6):
-	trisector_plots += (plot((x[i//2],trisector_endpoints_x[i]),(y[i//2],trisector_endpoints_y[i]),'b'),)
-
+# Sets up data for trisectors
+setup_trisectors()
 try:
-	inner_triangle_vertices = setup_inner_triangle_vertices()
+	vertices = setup_inner_triangle_vertices()
 except:
 	pass
 
+
+# Trisector lines
+trisector_plots = ()
+for i in range(6):
+	iq = i//2
+	iq1 = ((i-1) % 6 //2  + 1 ) % 3
+	trisector_plots += (plot((x[iq],vertices[iq1][0]),(y[iq],vertices[iq1][1]),'b'),)
+	
+# Inner triangle
 inner_triangle = ()
 
 for i in range(3):
-	inner_triangle += (plot ( (inner_triangle_vertices[i][0],inner_triangle_vertices[(i+1)%3][0] ),
-							  (inner_triangle_vertices[i][1],inner_triangle_vertices[(i+1)%3][1] ), 'w'),)
+	inner_triangle += (plot ( (vertices[i][0],vertices[(i+1)%3][0] ),
+							  (vertices[i][1],vertices[(i+1)%3][1] ), 'w'),)
 
 xlim(-2,2)
 ylim(-2,2)
