@@ -3,29 +3,27 @@ import matplotlib.backend_bases as be
 import numpy as np 
 
 # Mouse movement functions
-def reg_down(evt):
-	global down_state,vertex
-	down_state = 1
+def mouse_down(evt):
+	global vertex,cnct
 	artists = [p[i][0] for i in range(6)]
 	vertex = artists.index(evt.artist)
+	cnct = connect('motion_notify_event',mover)
 
-def reg_up(evt):
-	global down_state
-	if down_state:
-		down_state = 0
+event = None
+def mouse_up(evt):
+	event.canvas.mpl_disconnect(cnct)
 
 def mover(evt):
-	global vertex
+	global vertex,event
+	event = evt
 	try:
-		if down_state:
-			xx = evt.xdata
-			yy = evt.ydata
-			norm = np.sqrt(xx**2+yy**2)
-			x[vertex] = xx/norm
-			y[vertex] = yy/norm
-			redefine_hexagon()
+		xx = evt.xdata
+		yy = evt.ydata
+		norm = np.sqrt(xx**2+yy**2)
+		x[vertex] = xx/norm
+		y[vertex] = yy/norm
+		redefine_hexagon()
 	except:
-		raise
 		return 
 	
 def draw_conic():
@@ -71,15 +69,10 @@ def redraw_line():
 	# Redraw line
 	line[0].set_data(p1_x + np.array((-E,E))*(p2_x-p1_x),p1_y + np.array((-E,E))*(p2_y - p1_y))
 
-		
-
 fig = figure(figsize=(8,8))
 
-connect('pick_event',reg_down)
-connect('button_release_event',reg_up)
-connect('motion_notify_event',mover)
-
-down_state = 0
+connect('pick_event',mouse_down)
+connect('button_release_event',mouse_up)
 
 # vertices
 x = [ np.cos(2*np.pi*i/6) for i in range(6) ]
@@ -105,13 +98,9 @@ draw_conic()
 set_points_on_line()
 line = plot(p1_x + np.array((-E,E))*(p2_x-p1_x),p1_y + np.array((-E,E))*(p2_y - p1_y),'r')
 
-
-
 xlim(-4,4)
 ylim(-4,4)
 for i in range(6):
 	p[i][0].set_picker(5.0)
-
-
 
 fig.show()

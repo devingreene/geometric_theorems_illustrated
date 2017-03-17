@@ -3,27 +3,28 @@ import matplotlib.backend_bases as be
 import numpy as np 
 
 # Mouse movement functions
-def reg_down(evt):
-	global down_state,vertex
-	down_state = 1
+def mouse_down(evt):
+	global vertex,cnct
 	artists = [p[i][0] for i in range(3)]
 	vertex = artists.index(evt.artist)
+	cnct = connect('motion_notify_event',mover)
 
-def reg_up(evt):
-	global down_state
-	if down_state:
-		down_state = 0
+event = None
+def mouse_up(evt):
+	if event:
+		event.canvas.mpl_disconnect(cnct)
 
 def mover(evt):
-	global vertex
+	global vertex,event
+	event = evt
 	try:
-		if down_state:
-			x[vertex] = evt.xdata
-			y[vertex] = evt.ydata
-			redefine_triangle()
+		x[vertex] = evt.xdata
+		y[vertex] = evt.ydata
+		redefine_triangle()
 	except:
 		return 
 
+# Geometry calculations
 def compute_features():
 	global s,a
 	s = (
@@ -71,11 +72,8 @@ def redefine_triangle():
 fig = figure(figsize=(8,8))
 axes(aspect='equal')
 
-connect('pick_event',reg_down)
-connect('button_release_event',reg_up)
-connect('motion_notify_event',mover)
-
-down_state = 0
+connect('pick_event',mouse_down)
+connect('button_release_event',mouse_up)
 
 # vertices
 x = [-1,0.5,0.5]
