@@ -11,7 +11,8 @@ def mouse_down(evt):
 
 event = None
 def mouse_up(evt):
-	event.canvas.mpl_disconnect(cnct)
+	if event:
+		event.canvas.mpl_disconnect(cnct)
 
 def mover(evt):
 	global vertex,event
