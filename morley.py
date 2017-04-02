@@ -17,12 +17,11 @@ def mouse_up(evt):
 def mover(evt):
 	global vertex,event
 	event = evt
-	try:
+	if event.inaxes:
 		x[vertex] = evt.xdata
 		y[vertex] = evt.ydata
 		redraw_triangle()
-	except:
-		return 
+		fig.show()
 
 # Change geometry of figure
 def redraw_triangle():
@@ -37,7 +36,6 @@ def redraw_triangle():
 	for i in range(3):
 		inner_triangle[i][0].set_data((inner_triangle_vertices[i][0],inner_triangle_vertices[(i+1)%3][0] ),
 									  (inner_triangle_vertices[i][1],inner_triangle_vertices[(i+1)%3][1] )  )
-	fig.show()
 
 	
 # Utility for rotating sides to 

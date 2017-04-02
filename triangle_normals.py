@@ -18,12 +18,10 @@ def mouse_up(evt):
 def mover(evt):
 	global vertex,event
 	event = evt
-	try:
+	if event.inaxes:
 		x[vertex] = evt.xdata
 		y[vertex] = evt.ydata
 		redefine_triangle()
-	except:
-		return 
 
 def redefine_triangle():
 	p[0][0].set_data(x[0],y[0])

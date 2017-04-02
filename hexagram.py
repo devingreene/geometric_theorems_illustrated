@@ -17,15 +17,13 @@ def mouse_up(evt):
 def mover(evt):
 	global vertex,event
 	event = evt
-	try:
+	if event.inaxes:
 		xx = evt.xdata
 		yy = evt.ydata
 		norm = np.sqrt(xx**2+yy**2)
 		x[vertex] = xx/norm
 		y[vertex] = yy/norm
 		redefine_hexagon()
-	except:
-		return 
 	
 def draw_conic():
 	an = np.linspace(0,2*np.pi,501)

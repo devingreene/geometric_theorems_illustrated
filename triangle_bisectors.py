@@ -17,12 +17,10 @@ def mouse_up(evt):
 def mover(evt):
 	global vertex,event
 	event = evt
-	try:
+	if event.inaxes:
 		x[vertex] = evt.xdata
 		y[vertex] = evt.ydata
 		redefine_triangle()
-	except:
-		return 
 
 # Geometry calculations
 def compute_features():
