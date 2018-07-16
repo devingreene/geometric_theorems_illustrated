@@ -38,9 +38,12 @@ def redefine_triangle():
 	s[3][0].set_data([x[1],v3_x[2]],[y[1],v3_y[2]])
 	s[4][0].set_data([x[2],v3_x[1]],[y[2],v3_y[1]])
 	s[5][0].set_data([x[2],v3_x[0]],[y[2],v3_y[0]])
-	nap[0][0].set_data([centroids_x[0],centroids_x[1]],[centroids_y[0],centroids_y[1]])
-	nap[1][0].set_data([centroids_x[1],centroids_x[2]],[centroids_y[1],centroids_y[2]])
-	nap[2][0].set_data([centroids_x[0],centroids_x[2]],[centroids_y[0],centroids_y[2]])
+	nap[0][0].set_data([centroids_x[0],centroids_x[1]],
+            [centroids_y[0],centroids_y[1]])
+	nap[1][0].set_data([centroids_x[1],centroids_x[2]],
+            [centroids_y[1],centroids_y[2]])
+	nap[2][0].set_data([centroids_x[0],centroids_x[2]],
+            [centroids_y[0],centroids_y[2]])
 	fig.show()
 
 def compute_eq_triangles():
@@ -89,7 +92,8 @@ x = [-1,0.5,0.5]
 y = [0,-0.5*np.sqrt(3),0.5*np.sqrt(3)]
 
 p = plot(x[0],y[0]),plot(x[1],y[1]),plot(x[2],y[2])
-l = plot(x[:2],y[:2],'y'),plot(x[1:],y[1:],'y'),plot([x[2],x[0]],[y[2],y[0]],'y')
+l = plot(x[:2],y[:2]),plot(x[1:],y[1:]),\
+        plot([x[2],x[0]],[y[2],y[0]])
 compute_eq_triangles()
 s = (plot([x[0],v3_x[2]],[y[0],v3_y[2]],'purple'),
 plot([x[0],v3_x[1]],[y[0],v3_y[1]],'purple'),

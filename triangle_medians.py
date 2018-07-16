@@ -54,8 +54,11 @@ set_midpoints()
 
 
 p = plot(x[0],y[0]),plot(x[1],y[1]),plot(x[2],y[2])
-l = plot(x[:2],y[:2],'y'),plot(x[1:],y[1:],'y'),plot([x[2],x[0]],[y[2],y[0]],'y')
-m = plot([x[0],m_x[0]],[y[0],m_y[0]]),plot([x[1],m_x[1]],[y[1],m_y[1]]),plot([x[2],m_x[2]],[y[2],m_y[2]])
+l = plot(x[:2],y[:2]),plot(x[1:],y[1:]),\
+        plot([x[2],x[0]],[y[2],y[0]])
+m = plot([x[0],m_x[0]],[y[0],m_y[0]]),\
+        plot([x[1],m_x[1]],[y[1],m_y[1]]),\
+        plot([x[2],m_x[2]],[y[2],m_y[2]])
 
 xlim(-2,2)
 ylim(-2,2)

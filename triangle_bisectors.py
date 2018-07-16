@@ -78,9 +78,11 @@ x = [-1,0.5,0.5]
 y = [0,-0.5*np.sqrt(3),0.5*np.sqrt(3)]
 
 p = plot(x[0],y[0]),plot(x[1],y[1]),plot(x[2],y[2])
-l = plot(x[:2],y[:2],'y'),plot(x[1:],y[1:],'y'),plot([x[2],x[0]],[y[2],y[0]],'y')
+l = plot(x[:2],y[:2]),plot(x[1:],y[1:]),\
+        plot([x[2],x[0]],[y[2],y[0]])
 compute_bisectors()
-b = plot([x[0],b_x[0]],[y[0],b_y[0]]),plot([x[1],b_x[1]],[y[1],b_y[1]]),plot([x[2],b_x[2]],[y[2],b_y[2]])
+b = plot([x[0],b_x[0]],[y[0],b_y[0]]),plot([x[1],b_x[1]],
+        [y[1],b_y[1]]),plot([x[2],b_x[2]],[y[2],b_y[2]])
 
 xlim(-2,2)
 ylim(-2,2)

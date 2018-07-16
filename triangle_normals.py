@@ -78,7 +78,8 @@ y = [0,-0.5*np.sqrt(3),0.5*np.sqrt(3)]
 define_ex_factor()
 
 p = plot(x[0],y[0]),plot(x[1],y[1]),plot(x[2],y[2])
-l = plot(x[:2],y[:2],'y'),plot(x[1:],y[1:],'y'),plot([x[2],x[0]],[y[2],y[0]],'y')
+l = plot(x[:2],y[:2]),plot(x[1:],y[1:]),\
+        plot([x[2],x[0]],[y[2],y[0]])
 draw_normal_lines()
 n = plot(nx[0:2],ny[0:2]),plot(nx[2:4],ny[2:4]),plot(nx[4:],ny[4:])
 
